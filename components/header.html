@@ -1,23 +1,49 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top border-bottom border-primary">
-  <div class="container">
-    <a class="navbar-brand d-flex align-items-center gap-2" href="index.html">
-      <img src="https://img.icons8.com/ios-filled/50/3b82f6/monument.png" alt="ObeliscoTech Logo" width="30" height="30">
-      <span class="fw-bold fs-4 text-white">Obelisco<span class="text-primary">Tech</span></span>
-    </a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav ms-auto align-items-center gap-2">
-        <li class="nav-item"><a class="nav-link active" href="index.html">Inicio</a></li>
-        <li class="nav-item"><a class="nav-link" href="#equipo">Equipo</a></li>
-        <li class="nav-item"><a class="nav-link" href="#institucion">Institución</a></li>
-        <li class="nav-item ms-lg-2">
-          <a class="btn btn-primary fw-semibold px-3 py-2 rounded-pill shadow-sm" href="#proyecto">
-            Proyecto GCABA
-          </a>
-        </li>
-      </ul>
+<!-- HEADER / NAVIGATION -->
+<header class="sticky top-0 z-50 bg-white/95 backdrop-blur shadow-md border-b border-gray-100 transition-all">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+        
+        <!-- LOGO OBELISCOTECH -->
+        <a href="index.html#inicio" class="flex items-center gap-3 group">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#003366] to-[#0070E0] flex items-center justify-center shadow-md shadow-blue-500/20 group-hover:scale-105 transition-transform">
+                <!-- Obelisco SVG Icon -->
+                <svg class="w-6 h-6 text-[#FFCC00] fill-current" viewBox="0 0 24 24">
+                    <path d="M12 2L9 8v13h6V8l-3-6zm1 18h-2v-9h2v9z"/>
+                </svg>
+            </div>
+            <div>
+                <span class="text-xl font-black tracking-tight text-[#003366] block leading-none">Obelisco<span class="text-[#0070E0]">Tech</span></span>
+                <span class="text-[10px] font-semibold text-gray-500 tracking-wider uppercase block mt-1">Soluciones Digitales GCABA</span>
+            </div>
+        </a>
+
+        <!-- NAV LINKS (DESKTOP) -->
+        <nav class="hidden md:flex items-center gap-8 text-sm font-semibold text-gray-600">
+            <a href="index.html#inicio" class="hover:text-[#0070E0] transition-colors">Inicio</a>
+            <a href="index.html#equipo" class="hover:text-[#0070E0] transition-colors">Equipo</a>
+            <a href="https://ifts4.edu.ar/index.php" target="_blank" rel="noopener noreferrer" class="hover:text-[#0070E0] transition-colors flex items-center gap-1.5">
+                <span>Institución</span>
+                <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+            </a>
+            <a href="index.html#proyecto" class="px-5 py-2.5 rounded-full bg-[#0055A5] text-white hover:bg-[#003366] shadow-md hover:shadow-lg transition-all flex items-center gap-2">
+                <i class="fa-solid fa-folder-open text-xs"></i>
+                <span>Proyecto</span>
+            </a>
+        </nav>
+
+        <!-- MOBILE MENU BUTTON -->
+        <button id="mobileMenuBtn" class="md:hidden p-2 text-gray-600 hover:text-[#0055A5] focus:outline-none">
+            <i class="fa-solid fa-bars text-2xl"></i>
+        </button>
     </div>
-  </div>
-</nav>
+
+    <!-- MOBILE MENU DROPDOWN -->
+    <div id="mobileMenu" class="hidden md:hidden bg-white border-b border-gray-200 px-4 pt-3 pb-6 space-y-3 shadow-lg">
+        <a href="index.html#inicio" class="block py-2 text-gray-700 font-medium hover:text-[#0055A5]">Inicio</a>
+        <a href="index.html#equipo" class="block py-2 text-gray-700 font-medium hover:text-[#0055A5]">Equipo</a>
+        <a href="https://ifts4.edu.ar/index.php" target="_blank" rel="noopener noreferrer" class="block py-2 text-gray-700 font-medium hover:text-[#0055A5] flex items-center justify-between">
+            <span>Institución (IFTS 4)</span>
+            <i class="fa-solid fa-arrow-up-right-from-square text-xs text-gray-400"></i>
+        </a>
+        <a href="index.html#proyecto" class="block w-full text-center py-3 bg-[#0055A5] text-white rounded-xl font-bold shadow-md">Proyecto</a>
+    </div>
+</header>
