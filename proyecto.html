@@ -1,727 +1,742 @@
-<!-- Tailwind CSS CDN -->
-<script src="https://cdn.tailwindcss.com"></script>
-<script>
-    tailwind.config = {
-        theme: {
-            extend: {
-                colors: {
-                    gcaba: {
-                        blue: '#0055A5',
-                        darkBlue: '#003366',
-                        yellow: '#FFCC00',
-                        lightBg: '#F4F7FA',
-                        accent: '#0070E0'
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ObeliscoTech</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        gcaba: {
+                            blue: '#0055A5',
+                            darkBlue: '#003366',
+                            yellow: '#FFCC00',
+                            lightBg: '#F4F7FA',
+                            accent: '#0070E0'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif']
                     }
-                },
-                fontFamily: {
-                    sans: ['Inter', 'sans-serif']
                 }
             }
         }
-    }
-</script>
+    </script>
 
-<!-- FontAwesome Icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-<!-- Google Fonts -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 
-<!-- LIBRERÍA SHEETJS PARA PROCESAR PLANILLAS EXCEL (.xlsx) REALES -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <!-- LIBRERÍA SHEETJS PARA PROCESAR PLANILLAS EXCEL (.xlsx) RESTANTES -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
-<style>
-    /* TEMA CLARO INSTITUCIONAL CON GLASSMORPHISM SUAVE */
-    body {
-        background-color: #F4F7FA;
-        color: #1e293b;
-    }
+    <style>
+        /* TEMA CLARO INSTITUCIONAL CON GLASSMORPHISM SUAVE */
+        body {
+            background-color: #F4F7FA;
+            color: #1e293b;
+        }
 
-    .glass-card {
-        background: rgba(255, 255, 255, 0.9);
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(226, 232, 240, 0.9);
-        box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05);
-    }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(226, 232, 240, 0.9);
+            box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05);
+        }
 
-    .glass-phase {
-        background: linear-gradient(135deg, #0055A5 0%, #0070E0 100%);
-        box-shadow: 0 6px 20px rgba(0, 85, 165, 0.25);
-    }
+        .glass-phase {
+            background: linear-gradient(135deg, #0055A5 0%, #0070E0 100%);
+            box-shadow: 0 6px 20px rgba(0, 85, 165, 0.25);
+        }
 
-    /* ANIMACIÓN DE DIBUJO PROGRESIVO DE LÍNEAS SVG (STROKE-DASHOFFSET) */
-    .draw-path {
-        stroke-dasharray: 2000;
-        stroke-dashoffset: 2000;
-        transition: stroke-dashoffset 2.5s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    .draw-path.active {
-        stroke-dashoffset: 0;
-    }
+        /* ANIMACIÓN DE DIBUJO PROGRESIVO DE LÍNEAS SVG (STROKE-DASHOFFSET) */
+        .draw-path {
+            stroke-dasharray: 2000;
+            stroke-dashoffset: 2000;
+            transition: stroke-dashoffset 2.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .draw-path.active {
+            stroke-dashoffset: 0;
+        }
 
-    /* ANIMACIÓN DE REVELADO DE NODOS (FADE-IN + SCALE POP) */
-    .node-item {
-        opacity: 0;
-        transform: scale(0.85) translateY(-15px);
-        transition: opacity 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-        will-change: opacity, transform;
-    }
+        /* ANIMACIÓN DE REVELADO DE NODOS (FADE-IN + SCALE POP) */
+        .node-item {
+            opacity: 0;
+            transform: scale(0.85) translateY(-15px);
+            transition: opacity 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            will-change: opacity, transform;
+        }
 
-    .node-item.visible {
-        opacity: 1;
-        transform: scale(1) translateY(0);
-    }
+        .node-item.visible {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+        }
 
-    /* INTERACCIÓN HOVER: EFECTO POP / TOOLTIP */
-    .node-item.visible:hover {
-        transform: scale(1.04) translateY(-3px);
-        border-color: #0070E0;
-        box-shadow: 0 10px 25px -5px rgba(0, 85, 165, 0.15);
-    }
+        /* INTERACCIÓN HOVER: EFECTO POP / TOOLTIP */
+        .node-item.visible:hover {
+            transform: scale(1.04) translateY(-3px);
+            border-color: #0070E0;
+            box-shadow: 0 10px 25px -5px rgba(0, 85, 165, 0.15);
+        }
 
-    /* CONTENEDOR DRAGGABLE / TOUCH SCROLL PARA EL VISOR DE DOCUMENTOS */
-    .viewer-drag-container {
-        cursor: grab;
-        user-select: none;
-        touch-action: pan-x pan-y;
-    }
-    .viewer-drag-container:active {
-        cursor: grabbing;
-    }
+        /* CONTENEDOR DRAGGABLE / TOUCH SCROLL PARA EL VISOR DE DOCUMENTOS */
+        .viewer-drag-container {
+            cursor: grab;
+            user-select: none;
+            touch-action: pan-x pan-y;
+        }
+        .viewer-drag-container:active {
+            cursor: grabbing;
+        }
 
-    /* ESTILOS PARA LA TABLA DE EXCEL PARSEADA */
-    #parsedExcelTable {
-        width: max-content;
-        min-width: 100%;
-        border-collapse: collapse;
-        font-size: 12px;
-        white-space: nowrap;
-    }
-    #parsedExcelTable tr:nth-child(1) {
-        background-color: #003366 !important;
-        color: #ffffff !important;
-        font-weight: 700;
-        position: sticky;
-        top: 0;
-        z-index: 10;
-    }
-    #parsedExcelTable tr:nth-child(even) {
-        background-color: #f8fafc;
-    }
-    #parsedExcelTable tr:hover {
-        background-color: #e0f2fe;
-    }
-    #parsedExcelTable td, #parsedExcelTable th {
-        padding: 8px 14px;
-        border: 1px solid #cbd5e1;
-        text-align: left;
-    }
-</style>
+        /* ESTILOS PARA LA TABLA DE EXCEL PARSEADA */
+        #parsedExcelTable {
+            width: max-content;
+            min-width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+            white-space: nowrap;
+        }
+        #parsedExcelTable tr:nth-child(1) {
+            background-color: #003366 !important;
+            color: #ffffff !important;
+            font-weight: 700;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        #parsedExcelTable tr:nth-child(even) {
+            background-color: #f8fafc;
+        }
+        #parsedExcelTable tr:hover {
+            background-color: #e0f2fe;
+        }
+        #parsedExcelTable td, #parsedExcelTable th {
+            padding: 8px 14px;
+            border: 1px solid #cbd5e1;
+            text-align: left;
+        }
+    </style>
+</head>
+<body class="font-sans bg-gray-50 text-slate-800 antialiased selection:bg-gcaba-yellow selection:text-gcaba-darkBlue flex flex-col min-h-screen">
 
-
-<!-- DISCLAIMER ACADÉMICO BANNER -->
-<div class="bg-amber-500 text-slate-950 font-semibold px-4 py-2 text-center text-xs md:text-sm shadow-inner flex items-center justify-center gap-2 relative z-20">
-    <i class="fa-solid fa-graduation-cap text-base"></i>
-    <span><strong>ÁRBOL INTERACTIVO DE ENTREGABLES PMBOK:</strong> 28 Módulos de la EDT (IFTS N° 4 — Prof. María Pérez Willis).</span>
-</div>
-
-<!-- HEADER CARGADO DINÁMICAMENTE DESDE COMPONENTES -->
-<div id="header-container"></div>
-
-<!-- BOTONES DE CONTROL DE ANIMACIÓN Y PANEL CABECERA -->
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 w-full flex items-center justify-between">
-    <div class="flex items-center gap-3 bg-white px-4 py-2 rounded-2xl border border-gray-200 shadow-sm">
-        <span class="w-3 h-3 rounded-full bg-gcaba-blue animate-ping"></span>
-        <span class="text-xs font-bold text-gcaba-darkBlue uppercase tracking-wider">Flujo Vertical Top-Down PMBOK</span>
+    <!-- DISCLAIMER ACADÉMICO BANNER -->
+    <div class="bg-amber-500 text-slate-950 font-semibold px-4 py-2 text-center text-xs md:text-sm shadow-inner flex items-center justify-center gap-2 relative z-20">
+        <i class="fa-solid fa-graduation-cap text-base"></i>
+        <span><strong>ÁRBOL INTERACTIVO DE ENTREGABLES PMBOK:</strong> 28 Módulos de la EDT (IFTS N° 4 — Prof. María Pérez Willis).</span>
     </div>
-    <div class="flex gap-2">
-        <button onclick="startTreeAnimation()" class="px-4 py-2 rounded-xl bg-gcaba-blue hover:bg-gcaba-darkBlue text-white text-xs font-bold transition-all flex items-center gap-2 shadow-sm">
-            <i class="fa-solid fa-play"></i>
-            <span>Dibujar Árbol</span>
-        </button>
-        <button onclick="showAllNodesImmediately()" class="px-4 py-2 rounded-xl bg-white hover:bg-gray-100 text-slate-700 text-xs font-bold transition-all border border-gray-300">
-            <i class="fa-solid fa-eye"></i>
-            <span>Ver Todo</span>
-        </button>
-    </div>
-</div>
 
-<!-- MAIN INTERACTIVE CANVAS -->
-<main id="mainCanvas" class="flex-grow py-8 px-2 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full relative overflow-hidden">
-    
-    <!-- CANVAS ESTRUCTURA ÁRBOL TOP-DOWN -->
-    <div id="treeContainer" class="relative w-full bg-white rounded-3xl border border-gray-200 p-4 sm:p-8 shadow-sm overflow-hidden">
-        
-        <!-- SVG CONNECTING LINES LAYER -->
-        <svg id="treeSvg" class="absolute inset-0 w-full h-full pointer-events-none z-0" xmlns="http://www.w3.org/2000/svg">
-            <!-- EJE VERTICAL PRINCIPAL DE ARRIBA HACIA ABAJO -->
-            <path id="path-backbone" class="draw-path" d="M 640 40 L 640 1850" stroke="url(#gradLinear)" stroke-width="4" stroke-linecap="round" fill="none" />
-            
-            <!-- GRADIENTES DE COLOR INSTITUCIONALES -->
-            <defs>
-                <linearGradient id="gradLinear" x1="0%" y1="0%" x2="0%" y2="100%">
-                    <stop offset="0%" stop-color="#0055A5" />
-                    <stop offset="40%" stop-color="#0070E0" />
-                    <stop offset="70%" stop-color="#10b981" />
-                    <stop offset="100%" stop-color="#d97706" />
-                </linearGradient>
-            </defs>
-        </svg>
+    <!-- HEADER CARGADO DINÁMICAMENTE DESDE COMPONENTES -->
+    <div id="header-container"></div>
 
-        <!-- CONTENEDOR DE NODOS JERÁRQUICOS DE ARRIBA HACIA ABAJO -->
-        <div class="relative z-10 space-y-12">
-
-            <!-- ==================== FASE 1: INICIO ==================== -->
-            <div class="space-y-6">
-                <div class="flex justify-center">
-                    <div id="node-f1" class="node-item glass-phase text-white px-8 py-3.5 rounded-full font-black text-sm tracking-wide shadow-lg flex items-center gap-3 border border-white/20">
-                        <i class="fa-solid fa-flag text-gcaba-yellow"></i>
-                        <span>1. INICIO</span>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-                    <!-- DOCUMENTOS CONSTITUCIÓN -->
-                    <div class="space-y-3">
-                        <div id="node-gi1" class="node-item bg-blue-50/80 border border-blue-200 text-gcaba-darkBlue p-2 rounded-xl text-center text-xs font-bold uppercase tracking-wider">
-                            Documentos de Constitución
-                        </div>
-                        <div class="space-y-2">
-                            <div id="node-01" class="node-item glass-card p-3 rounded-xl border-l-4 border-l-gcaba-blue cursor-pointer flex items-center justify-between" onclick="openDocModal('docs/01_Acta_Constitucion.pdf', '01. Acta de Constitución', 'pdf')">
-                                <span class="text-xs font-semibold text-slate-800">01. Acta Constitución</span>
-                                <i class="fa-solid fa-file-pdf text-red-500 text-xs"></i>
-                            </div>
-                            <div id="node-02" class="node-item glass-card p-3 rounded-xl border-l-4 border-l-gcaba-blue cursor-pointer flex items-center justify-between" onclick="openDocModal('docs/02_Objetivo.pdf', '02. Objetivo del Proyecto', 'pdf')">
-                                <span class="text-xs font-semibold text-slate-800">02. Objetivo</span>
-                                <i class="fa-solid fa-file-pdf text-red-500 text-xs"></i>
-                            </div>
-                            <div id="node-03" class="node-item glass-card p-3 rounded-xl border-l-4 border-l-gcaba-blue cursor-pointer flex items-center justify-between" onclick="openDocModal('docs/03_Alcance_Proyecto.pdf', '03. Alcance del Proyecto', 'pdf')">
-                                <span class="text-xs font-semibold text-slate-800">03. Alcance Proyecto</span>
-                                <i class="fa-solid fa-file-pdf text-red-500 text-xs"></i>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- STAKEHOLDERS -->
-                    <div class="space-y-3">
-                        <div id="node-gi2" class="node-item bg-blue-50/80 border border-blue-200 text-gcaba-darkBlue p-2 rounded-xl text-center text-xs font-bold uppercase tracking-wider">
-                            Stakeholders
-                        </div>
-                        <div id="node-04" class="node-item glass-card p-3 rounded-xl border-l-4 border-l-gcaba-blue cursor-pointer flex items-center justify-between" onclick="openDocModal('docs/04_Listado_Interesados.pdf', '04. Listado de Interesados', 'pdf')">
-                            <span class="text-xs font-semibold text-slate-800">04. Listado Interesados</span>
-                            <i class="fa-solid fa-file-pdf text-red-500 text-xs"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- ==================== FASE 2: PLANIFICACIÓN ==================== -->
-            <div class="space-y-6 pt-4">
-                <div class="flex justify-center">
-                    <div id="node-f2" class="node-item glass-phase text-white px-8 py-3.5 rounded-full font-black text-sm tracking-wide shadow-lg flex items-center gap-3 border border-white/20">
-                        <i class="fa-solid fa-diagram-project text-gcaba-yellow"></i>
-                        <span>2. PLANIFICACIÓN</span>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <!-- RIESGOS -->
-                    <div class="space-y-2">
-                        <div id="node-gp1" class="node-item bg-purple-50 border border-purple-200 text-purple-900 p-2 rounded-lg text-center text-[11px] font-bold uppercase">Gestión de Riesgos</div>
-                        <div id="node-05" class="node-item glass-card p-3 rounded-xl border-l-4 border-l-purple-500 cursor-pointer flex items-center justify-between" onclick="openDocModal('docs/05_Gestion_Riesgos_Reserva.pdf', '05. Gestión Riesgos Reserva', 'pdf')">
-                            <span class="text-xs font-semibold text-slate-800">05. Riesgos Reserva</span>
-                            <i class="fa-solid fa-file-pdf text-red-500 text-xs"></i>
-                        </div>
-                    </div>
-
-                    <!-- RRHH -->
-                    <div class="space-y-2">
-                        <div id="node-gp2" class="node-item bg-purple-50 border border-purple-200 text-purple-900 p-2 rounded-lg text-center text-[11px] font-bold uppercase">Gestión de RRHH</div>
-                        <div id="node-06" class="node-item glass-card p-3 rounded-xl border-l-4 border-l-purple-500 cursor-pointer flex items-center justify-between" onclick="openDocModal('docs/06_Gestion_RRHH.pdf', '06. Gestión RRHH', 'pdf')">
-                            <span class="text-xs font-semibold text-slate-800">06. Gestión RRHH</span>
-                            <i class="fa-solid fa-file-pdf text-red-500 text-xs"></i>
-                        </div>
-                    </div>
-
-                    <!-- REQUISITOS (XLSX REALES) -->
-                    <div class="space-y-2">
-                        <div id="node-gp3" class="node-item bg-emerald-50 border border-emerald-200 text-emerald-900 p-2 rounded-lg text-center text-[11px] font-bold uppercase">Requisitos</div>
-                        <div id="node-07" class="node-item glass-card p-2.5 rounded-xl border-l-4 border-l-emerald-500 cursor-pointer flex items-center justify-between" onclick="openDocModal('docs/07_Requisitos_Funcionales.xlsx', '07. Requisitos Funcionales', 'xlsx')">
-                            <span class="text-xs font-semibold text-slate-800">07. Req. Funcionales</span>
-                            <i class="fa-solid fa-file-excel text-emerald-600 text-xs"></i>
-                        </div>
-                        <div id="node-08" class="node-item glass-card p-2.5 rounded-xl border-l-4 border-l-emerald-500 cursor-pointer flex items-center justify-between" onclick="openDocModal('docs/08_Requisitos_No_Funcionales.xlsx', '08. Requisitos No Funcionales', 'xlsx')">
-                            <span class="text-xs font-semibold text-slate-800">08. Req. No Funcionales</span>
-                            <i class="fa-solid fa-file-excel text-emerald-600 text-xs"></i>
-                        </div>
-                        <div id="node-09" class="node-item glass-card p-2.5 rounded-xl border-l-4 border-l-emerald-500 cursor-pointer flex items-center justify-between" onclick="openDocModal('docs/09_Requisitos_Entregables.xlsx', '09. Requisitos Entregables', 'xlsx')">
-                            <span class="text-xs font-semibold text-slate-800">09. Req. Entregables</span>
-                            <i class="fa-solid fa-file-excel text-emerald-600 text-xs"></i>
-                        </div>
-                    </div>
-
-                    <!-- TIEMPOS, COSTOS & ARQUITECTURA -->
-                    <div class="space-y-2">
-                        <div id="node-gp4" class="node-item bg-purple-50 border border-purple-200 text-purple-900 p-2 rounded-lg text-center text-[11px] font-bold uppercase">Tiempos & Costos</div>
-                        <div id="node-10" class="node-item glass-card p-2 rounded-lg cursor-pointer flex items-center justify-between" onclick="openDocModal('docs/10_Hitos_Proyecto.pdf', '10. Hitos del Proyecto', 'pdf')">
-                            <span class="text-xs text-slate-800">10. Hitos Proyecto</span>
-                            <i class="fa-solid fa-file-pdf text-red-500 text-xs"></i>
-                        </div>
-                        <div id="node-21" class="node-item glass-card p-2 rounded-lg cursor-pointer flex items-center justify-between" onclick="openDocModal('docs/21_Cronograma.xlsx', '21. Cronograma Base', 'xlsx')">
-                            <span class="text-xs text-slate-800">21. Cronograma</span>
-                            <i class="fa-solid fa-file-excel text-emerald-600 text-xs"></i>
-                        </div>
-                        <div id="node-23" class="node-item glass-card p-2 rounded-lg cursor-pointer flex items-center justify-between" onclick="openDocModal('docs/23_Gantt_Duracion_PERT.xlsx', '23. Gantt PERT', 'xlsx')">
-                            <span class="text-xs text-slate-800">23. Gantt PERT</span>
-                            <i class="fa-solid fa-file-excel text-emerald-600 text-xs"></i>
-                        </div>
-                        <div id="node-22" class="node-item glass-card p-2 rounded-lg cursor-pointer flex items-center justify-between" onclick="openDocModal('docs/22_Presupuesto.xlsx', '22. Presupuesto Mensual', 'xlsx')">
-                            <span class="text-xs text-slate-800">22. Presupuesto</span>
-                            <i class="fa-solid fa-file-excel text-emerald-600 text-xs"></i>
-                        </div>
-                        <div id="node-26" class="node-item glass-card p-2 rounded-lg cursor-pointer flex items-center justify-between" onclick="openDocModal('docs/26_Diagrama_Red.pdf', '26. Diagrama de Red PDM', 'pdf')">
-                            <span class="text-xs text-slate-800">26. Diagrama Red</span>
-                            <i class="fa-solid fa-file-pdf text-red-500 text-xs"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- ==================== FASE 3: EJECUCIÓN ==================== -->
-            <div class="space-y-6 pt-4">
-                <div class="flex justify-center">
-                    <div id="node-f3" class="node-item glass-phase text-white px-8 py-3.5 rounded-full font-black text-sm tracking-wide shadow-lg flex items-center gap-3 border border-white/20">
-                        <i class="fa-solid fa-gears text-gcaba-yellow"></i>
-                        <span>3. EJECUCIÓN</span>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-                    <!-- EDT / WBS -->
-                    <div class="space-y-3">
-                        <div id="node-ge1" class="node-item bg-emerald-50 border border-emerald-200 text-emerald-900 p-2 rounded-xl text-center text-xs font-bold uppercase tracking-wider">
-                            EDT / WBS Módulos
-                        </div>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                            <div id="node-11" class="node-item glass-card p-2.5 rounded-xl border-l-4 border-l-emerald-500 cursor-pointer flex items-center justify-between" onclick="openDocModal('docs/11_EDT.png', '11. EDT General Diagrama', 'image')">
-                                <span class="text-xs font-semibold text-slate-800">11. EDT General</span>
-                                <i class="fa-solid fa-image text-blue-500 text-xs"></i>
-                            </div>
-                            <div id="node-13" class="node-item glass-card p-2.5 rounded-xl border-l-4 border-l-emerald-500 cursor-pointer flex items-center justify-between" onclick="openDocModal('docs/13_EDT_Gestion_Proyecto.xlsx', '13. EDT Gestión Proyecto', 'xlsx')">
-                                <span class="text-xs font-semibold text-slate-800">13. EDT Gestión</span>
-                                <i class="fa-solid fa-file-excel text-emerald-600 text-xs"></i>
-                            </div>
-                            <div id="node-14" class="node-item glass-card p-2.5 rounded-xl border-l-4 border-l-emerald-500 cursor-pointer flex items-center justify-between" onclick="openDocModal('docs/14_EDT_Analisis_Diseno.xlsx', '14. EDT Análisis Diseño', 'xlsx')">
-                                <span class="text-xs font-semibold text-slate-800">14. EDT Análisis</span>
-                                <i class="fa-solid fa-file-excel text-emerald-600 text-xs"></i>
-                            </div>
-                            <div id="node-15" class="node-item glass-card p-2.5 rounded-xl border-l-4 border-l-emerald-500 cursor-pointer flex items-center justify-between" onclick="openDocModal('docs/15_EDT_Front_End.xlsx', '15. EDT Front-End React', 'xlsx')">
-                                <span class="text-xs font-semibold text-slate-800">15. EDT Front-End</span>
-                                <i class="fa-solid fa-file-excel text-emerald-600 text-xs"></i>
-                            </div>
-                            <div id="node-16" class="node-item glass-card p-2.5 rounded-xl border-l-4 border-l-emerald-500 cursor-pointer flex items-center justify-between" onclick="openDocModal('docs/16_EDT_Back_End.xlsx', '16. EDT Back-End Java', 'xlsx')">
-                                <span class="text-xs font-semibold text-slate-800">16. EDT Back-End</span>
-                                <i class="fa-solid fa-file-excel text-emerald-600 text-xs"></i>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- DESPLIEGUE -->
-                    <div class="space-y-3">
-                        <div id="node-ge2" class="node-item bg-emerald-50 border border-emerald-200 text-emerald-900 p-2 rounded-xl text-center text-xs font-bold uppercase tracking-wider">
-                            Despliegue PaaS
-                        </div>
-                        <div id="node-19" class="node-item glass-card p-3 rounded-xl border-l-4 border-l-emerald-500 cursor-pointer flex items-center justify-between" onclick="openDocModal('docs/19_EDT_Despliegue_Cierre.xlsx', '19. EDT Despliegue OpenShift', 'xlsx')">
-                            <span class="text-xs font-semibold text-slate-800">19. EDT Despliegue Cierre</span>
-                            <i class="fa-solid fa-file-excel text-emerald-600 text-xs"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- ==================== FASE 4: MONITOREO Y CONTROL ==================== -->
-            <div class="space-y-6 pt-4">
-                <div class="flex justify-center">
-                    <div id="node-f4" class="node-item glass-phase text-white px-8 py-3.5 rounded-full font-black text-sm tracking-wide shadow-lg flex items-center gap-3 border border-white/20">
-                        <i class="fa-solid fa-shield-halved text-gcaba-yellow"></i>
-                        <span>4. MONITOREO Y CONTROL</span>
-                    </div>
-                </div>
-
-                <div class="max-w-xl mx-auto space-y-3">
-                    <div id="node-gm1" class="node-item bg-amber-50 border border-amber-200 text-amber-900 p-2 rounded-xl text-center text-xs font-bold uppercase tracking-wider">
-                        Aseguramiento de Calidad & ASI
-                    </div>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        <div id="node-17" class="node-item glass-card p-3 rounded-xl border-l-4 border-l-amber-500 cursor-pointer flex items-center justify-between" onclick="openDocModal('docs/17_EDT_Calidad_Seguridad.pdf.xlsx', '17. EDT Calidad y Seguridad', 'xlsx')">
-                            <span class="text-xs font-semibold text-slate-800">17. EDT Calidad Seguridad</span>
-                            <i class="fa-solid fa-file-excel text-emerald-600 text-xs"></i>
-                        </div>
-                        <div id="node-18" class="node-item glass-card p-3 rounded-xl border-l-4 border-l-amber-500 cursor-pointer flex items-center justify-between" onclick="openDocModal('docs/18_EDT_Pruebas_Testeos.xlsx', '18. EDT Pruebas y Testeos', 'xlsx')">
-                            <span class="text-xs font-semibold text-slate-800">18. EDT Pruebas Testeos</span>
-                            <i class="fa-solid fa-file-excel text-emerald-600 text-xs"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- ==================== FASE 5: CIERRE ==================== -->
-            <div class="space-y-6 pt-4">
-                <div class="flex justify-center">
-                    <div id="node-f5" class="node-item glass-phase text-white px-8 py-3.5 rounded-full font-black text-sm tracking-wide shadow-lg flex items-center gap-3 border border-white/20">
-                        <i class="fa-solid fa-crown text-gcaba-yellow"></i>
-                        <span>5. CIERRE</span>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-                    <!-- INFORMES FINALES -->
-                    <div class="space-y-3">
-                        <div id="node-gc1" class="node-item bg-red-50 border border-red-200 text-red-900 p-2 rounded-xl text-center text-xs font-bold uppercase tracking-wider">
-                            Informes Finales
-                        </div>
-                        <div id="node-20" class="node-item glass-card p-3 rounded-xl border-l-4 border-l-red-500 cursor-pointer flex items-center justify-between" onclick="openDocModal('docs/20_Desarrollo_Presupuesto_Cronograma.pdf', '20. Dev Presupuesto Cronograma', 'pdf')">
-                            <span class="text-xs font-semibold text-slate-800">20. Dev Presupuesto Cronograma</span>
-                            <i class="fa-solid fa-file-pdf text-red-500 text-xs"></i>
-                        </div>
-                        <!-- NODO 28 CÚPULA MAESTRO -->
-                        <div id="node-28" class="node-item bg-gradient-to-r from-amber-400 to-yellow-500 p-0.5 rounded-2xl shadow-md cursor-pointer" onclick="openDocModal('docs/28_Informe_Maestro_Completo.pdf', '28. Informe Maestro Completo PMBOK', 'pdf')">
-                            <div class="bg-slate-900 p-4 rounded-[14px] flex items-center justify-between">
-                                <div class="flex items-center gap-3">
-                                    <i class="fa-solid fa-crown text-amber-400 text-lg"></i>
-                                    <span class="text-xs font-black text-amber-300 uppercase">28. Informe Maestro Completo</span>
-                                </div>
-                                <span class="text-[10px] bg-amber-400/20 text-amber-300 px-2 py-0.5 rounded font-bold">PDF FINAL</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- DOCUMENTACIÓN SOPORTE -->
-                    <div class="space-y-3">
-                        <div id="node-gc2" class="node-item bg-red-50 border border-red-200 text-red-900 p-2 rounded-xl text-center text-xs font-bold uppercase tracking-wider">
-                            Documentación Soporte
-                        </div>
-                        <div id="node-27" class="node-item glass-card p-3 rounded-xl border-l-4 border-l-red-500 cursor-pointer flex items-center justify-between" onclick="openDocModal('docs/27_Glosario_Terminos.xlsx', '27. Glosario de Términos', 'xlsx')">
-                            <span class="text-xs font-semibold text-slate-800">27. Glosario de Términos</span>
-                            <i class="fa-solid fa-file-excel text-emerald-600 text-xs"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
+    <!-- BOTONES DE CONTROL DE ANIMACIÓN Y PANEL CABECERA -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 w-full flex items-center justify-between">
+        <div class="flex items-center gap-3 bg-white px-4 py-2 rounded-2xl border border-gray-200 shadow-sm">
+            <span class="w-3 h-3 rounded-full bg-gcaba-blue animate-ping"></span>
+            <span class="text-xs font-bold text-gcaba-darkBlue uppercase tracking-wider">Documentos del Proyecto organizados</span>
         </div>
-
-    </div>
-
-</main>
-
-<!-- FOOTER CARGADO DINÁMICAMENTE -->
-<div id="footer-container"></div>
-
-<!-- MODAL DE VISUALIZACIÓN DINÁMICO (PDF, IMÁGENES Y EXCEL AMPLIADO CON CONTROLES DE ZOOM) -->
-<div id="docViewerModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-50 hidden flex flex-col transition-opacity">
-    
-    <!-- ENCABEZADO DEL MODAL -->
-    <div class="bg-white border-b border-gray-200 px-6 py-3 flex items-center justify-between shadow-sm">
-        <div class="flex items-center gap-3">
-            <div id="modalFileTypeIcon" class="w-9 h-9 rounded-xl bg-gcaba-blue text-white flex items-center justify-center font-bold text-sm">
-                <i class="fa-solid fa-file-pdf"></i>
-            </div>
-            <div>
-                <h3 id="modalDocTitle" class="text-base font-bold text-slate-900">Documento Oficial</h3>
-                <span id="modalDocPath" class="text-xs font-mono text-gray-500">docs/archivo.pdf</span>
-            </div>
-        </div>
-
-        <!-- CONTROLES DE ZOOM Y ACCIONES -->
-        <div class="flex items-center gap-2">
-            <!-- CONTROLES DE ZOOM PARA PLANILLAS GANTT Y TABLAS ANCHAS -->
-            <div id="zoomControls" class="hidden flex items-center bg-gray-100 rounded-xl p-1 border border-gray-300 mr-2">
-                <button onclick="changeExcelZoom(-0.1)" class="w-7 h-7 rounded-lg bg-white text-slate-700 hover:bg-gray-200 font-bold text-xs shadow-sm flex items-center justify-center" title="Alejar (-)">
-                    <i class="fa-solid fa-minus"></i>
-                </button>
-                <span id="zoomLevelLabel" class="text-xs font-mono font-bold px-2 text-slate-700">100%</span>
-                <button onclick="changeExcelZoom(0.1)" class="w-7 h-7 rounded-lg bg-white text-slate-700 hover:bg-gray-200 font-bold text-xs shadow-sm flex items-center justify-center" title="Acercar (+)">
-                    <i class="fa-solid fa-plus"></i>
-                </button>
-                <button onclick="resetExcelZoom()" class="px-2 py-1 ml-1 rounded-lg bg-white text-slate-700 hover:bg-gray-200 text-[10px] font-bold shadow-sm" title="Restablecer">
-                    Reset
-                </button>
-            </div>
-
-            <a id="btnDownloadDoc" href="#" download class="px-3.5 py-2 bg-gray-100 hover:bg-gray-200 text-slate-800 rounded-xl text-xs font-bold transition-colors flex items-center gap-2 border border-gray-300">
-                <i class="fa-solid fa-download"></i>
-                <span class="hidden sm:inline">Descargar Archivo</span>
-            </a>
-            <button onclick="closeDocModal()" class="w-9 h-9 rounded-xl bg-red-50 hover:bg-red-500 text-red-600 hover:text-white transition-all flex items-center justify-center font-bold">
-                <i class="fa-solid fa-xmark text-lg"></i>
+        <div class="flex gap-2">
+            <button onclick="startTreeAnimation()" class="px-4 py-2 rounded-xl bg-gcaba-blue hover:bg-gcaba-darkBlue text-white text-xs font-bold transition-all flex items-center gap-2 shadow-sm">
+                <i class="fa-solid fa-play"></i>
+                <span>Desplegar Documentos</span>
+            </button>
+            <button onclick="showAllNodesImmediately()" class="px-4 py-2 rounded-xl bg-white hover:bg-gray-100 text-slate-700 text-xs font-bold transition-all border border-gray-300">
+                <i class="fa-solid fa-eye"></i>
+                <span>Ver Todo</span>
             </button>
         </div>
     </div>
 
-    <!-- CUERPO DEL MODAL (VISOR AMPLIADO CON SCROLL Y DRAG PANORÁMICO) -->
-    <div class="flex-grow p-2 sm:p-4 bg-slate-100 overflow-hidden relative">
-        <div id="viewerViewport" class="w-full h-full rounded-2xl bg-white border border-gray-300 shadow-inner overflow-auto viewer-drag-container p-2">
+    <!-- MAIN INTERACTIVE CANVAS -->
+    <main id="mainCanvas" class="flex-grow py-8 px-2 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full relative overflow-hidden">
+        
+        <!-- CANVAS ESTRUCTURA ÁRBOL TOP-DOWN -->
+        <div id="treeContainer" class="relative w-full bg-white rounded-3xl border border-gray-200 p-4 sm:p-8 shadow-sm overflow-hidden">
             
-            <!-- IFRAME PARA DOCUMENTOS PDF -->
-            <iframe id="docIframe" src="" class="w-full h-full min-h-[600px] border-0 rounded-xl hidden" title="Visor PDF"></iframe>
-            
-            <!-- VISTA PREVIA DE IMÁGENES (.PNG / .JPG) -->
-            <img id="docImage" src="" alt="Previsualización" class="max-w-full h-auto mx-auto rounded-lg shadow hidden pointer-events-none">
-            
-            <!-- RENDERIZADOR DINÁMICO DE ARCHIVOS EXCEL (.xlsx) PARSEADOS SINO FILAS/COLUMNAS VACÍAS -->
-            <div id="excelPreviewContainer" class="hidden space-y-3 w-full py-2">
-                <div class="bg-blue-50/80 p-3 rounded-xl border border-blue-200 flex items-center justify-between">
-                    <div class="flex items-center gap-3">
-                        <i class="fa-solid fa-file-excel text-emerald-600 text-xl"></i>
-                        <div>
-                            <h4 class="text-xs font-bold text-slate-900">Vista Completa de Planilla Excel (.xlsx)</h4>
-                            <p class="text-[11px] text-slate-600">Arrastrá con el mouse o dedo para desplazarte por el Diagrama de Gantt.</p>
+            <!-- SVG CONNECTING LINES LAYER -->
+            <svg id="treeSvg" class="absolute inset-0 w-full h-full pointer-events-none z-0" xmlns="http://www.w3.org/2000/svg">
+                <!-- EJE VERTICAL PRINCIPAL DE ARRIBA HACIA ABAJO -->
+                <path id="path-backbone" class="draw-path" d="M 640 40 L 640 1850" stroke="url(#gradLinear)" stroke-width="4" stroke-linecap="round" fill="none" />
+                
+                <!-- GRADIENTES DE COLOR INSTITUCIONALES -->
+                <defs>
+                    <linearGradient id="gradLinear" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" stop-color="#0055A5" />
+                        <stop offset="40%" stop-color="#0070E0" />
+                        <stop offset="70%" stop-color="#10b981" />
+                        <stop offset="100%" stop-color="#d97706" />
+                    </linearGradient>
+                </defs>
+            </svg>
+
+            <!-- CONTENEDOR DE NODOS JERÁRQUICOS DE ARRIBA HACIA ABAJO -->
+            <div class="relative z-10 space-y-12">
+
+                <!-- ==================== FASE 1: INICIO ==================== -->
+                <div class="space-y-6">
+                    <div class="flex justify-center">
+                        <div id="node-f1" class="node-item glass-phase text-white px-8 py-3.5 rounded-full font-black text-sm tracking-wide shadow-lg flex items-center gap-3 border border-white/20">
+                            <i class="fa-solid fa-flag text-gcaba-yellow"></i>
+                            <span>1. INICIO</span>
                         </div>
                     </div>
-                    <span class="text-[10px] bg-emerald-100 text-emerald-800 font-bold px-2.5 py-1 rounded-full border border-emerald-300">Modo Solo Lectura</span>
-                </div>
 
-                <!-- TABLA DONDE SHEETJS RENDERIZARÁ LA PLANILLA SIN FILAS/COLUMNAS VACÍAS -->
-                <div id="excelZoomWrapper" class="transition-transform origin-top-left overflow-visible">
-                    <div id="excelTableOutput" class="w-full overflow-x-auto rounded-xl border border-gray-300 bg-white shadow-sm p-1">
-                        <!-- El HTML de la tabla procesada se inyectará aquí -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+                        <!-- DOCUMENTOS CONSTITUCIÓN -->
+                        <div class="space-y-3">
+                            <div id="node-gi1" class="node-item bg-blue-50/80 border border-blue-200 text-gcaba-darkBlue p-2 rounded-xl text-center text-xs font-bold uppercase tracking-wider">
+                                Documentos de Constitución
+                            </div>
+                            <div class="space-y-2">
+                                <div id="node-01" class="node-item glass-card p-3 rounded-xl border-l-4 border-l-gcaba-blue cursor-pointer flex items-center justify-between" onclick="openDocModal('docs/01_Acta_Constitucion.pdf', '01. Acta Constitución')">
+                                    <span class="text-xs font-semibold text-slate-800">01. Acta Constitución</span>
+                                    <i class="fa-solid fa-file-pdf text-red-500 text-xs"></i>
+                                </div>
+                                <div id="node-02" class="node-item glass-card p-3 rounded-xl border-l-4 border-l-gcaba-blue cursor-pointer flex items-center justify-between" onclick="openDocModal('docs/02_Objetivo.pdf', '02. Objetivo del Proyecto')">
+                                    <span class="text-xs font-semibold text-slate-800">02. Objetivo</span>
+                                    <i class="fa-solid fa-file-pdf text-red-500 text-xs"></i>
+                                </div>
+                                <div id="node-03" class="node-item glass-card p-3 rounded-xl border-l-4 border-l-gcaba-blue cursor-pointer flex items-center justify-between" onclick="openDocModal('docs/03_Alcance_Proyecto.pdf', '03. Alcance del Proyecto')">
+                                    <span class="text-xs font-semibold text-slate-800">03. Alcance Proyecto</span>
+                                    <i class="fa-solid fa-file-pdf text-red-500 text-xs"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- STAKEHOLDERS -->
+                        <div class="space-y-3">
+                            <div id="node-gi2" class="node-item bg-blue-50/80 border border-blue-200 text-gcaba-darkBlue p-2 rounded-xl text-center text-xs font-bold uppercase tracking-wider">
+                                Stakeholders
+                            </div>
+                            <div id="node-04" class="node-item glass-card p-3 rounded-xl border-l-4 border-l-gcaba-blue cursor-pointer flex items-center justify-between" onclick="openDocModal('docs/04_Listado_Interesados.pdf', '04. Listado de Interesados')">
+                                <span class="text-xs font-semibold text-slate-800">04. Listado Interesados</span>
+                                <i class="fa-solid fa-file-pdf text-red-500 text-xs"></i>
+                            </div>
+                        </div>
                     </div>
                 </div>
+
+                <!-- ==================== FASE 2: PLANIFICACIÓN ==================== -->
+                <div class="space-y-6 pt-4">
+                    <div class="flex justify-center">
+                        <div id="node-f2" class="node-item glass-phase text-white px-8 py-3.5 rounded-full font-black text-sm tracking-wide shadow-lg flex items-center gap-3 border border-white/20">
+                            <i class="fa-solid fa-diagram-project text-gcaba-yellow"></i>
+                            <span>2. PLANIFICACIÓN</span>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <!-- RIESGOS -->
+                        <div class="space-y-2">
+                            <div id="node-gp1" class="node-item bg-purple-50 border border-purple-200 text-purple-900 p-2 rounded-lg text-center text-[11px] font-bold uppercase">Gestión de Riesgos</div>
+                            <div id="node-05" class="node-item glass-card p-3 rounded-xl border-l-4 border-l-purple-500 cursor-pointer flex items-center justify-between" onclick="openDocModal('docs/05_Gestion_Riesgos_Reserva.pdf', '05. Gestión Riesgos Reserva')">
+                                <span class="text-xs font-semibold text-slate-800">05. Riesgos Reserva</span>
+                                <i class="fa-solid fa-file-pdf text-red-500 text-xs"></i>
+                            </div>
+                        </div>
+
+                        <!-- RRHH -->
+                        <div class="space-y-2">
+                            <div id="node-gp2" class="node-item bg-purple-50 border border-purple-200 text-purple-900 p-2 rounded-lg text-center text-[11px] font-bold uppercase">Gestión de RRHH</div>
+                            <div id="node-06" class="node-item glass-card p-3 rounded-xl border-l-4 border-l-purple-500 cursor-pointer flex items-center justify-between" onclick="openDocModal('docs/06_Gestion_RRHH.pdf', '06. Gestión RRHH')">
+                                <span class="text-xs font-semibold text-slate-800">06. Gestión RRHH</span>
+                                <i class="fa-solid fa-file-pdf text-red-500 text-xs"></i>
+                            </div>
+                        </div>
+
+                        <!-- REQUISITOS (XLSX REALES) -->
+                        <div class="space-y-2">
+                            <div id="node-gp3" class="node-item bg-emerald-50 border border-emerald-200 text-emerald-900 p-2 rounded-lg text-center text-[11px] font-bold uppercase">Requisitos</div>
+                            <div id="node-07" class="node-item glass-card p-2.5 rounded-xl border-l-4 border-l-emerald-500 cursor-pointer flex items-center justify-between" onclick="openDocModal('docs/07_Requisitos_Funcionales.xlsx', '07. Requisitos Funcionales')">
+                                <span class="text-xs font-semibold text-slate-800">07. Req. Funcionales</span>
+                                <i class="fa-solid fa-file-excel text-emerald-600 text-xs"></i>
+                            </div>
+                            <div id="node-08" class="node-item glass-card p-2.5 rounded-xl border-l-4 border-l-emerald-500 cursor-pointer flex items-center justify-between" onclick="openDocModal('docs/08_Requisitos_No_Funcionales.xlsx', '08. Requisitos No Funcionales')">
+                                <span class="text-xs font-semibold text-slate-800">08. Req. No Funcionales</span>
+                                <i class="fa-solid fa-file-excel text-emerald-600 text-xs"></i>
+                            </div>
+                            <div id="node-09" class="node-item glass-card p-2.5 rounded-xl border-l-4 border-l-emerald-500 cursor-pointer flex items-center justify-between" onclick="openDocModal('docs/09_Requisitos_Entregables.xlsx', '09. Requisitos Entregables')">
+                                <span class="text-xs font-semibold text-slate-800">09. Req. Entregables</span>
+                                <i class="fa-solid fa-file-excel text-emerald-600 text-xs"></i>
+                            </div>
+                        </div>
+
+                        <!-- TIEMPOS, COSTOS & ARQUITECTURA (ACTUALIZADO A PDF SEGÚN TUS ARCHIVOS REALES) -->
+                        <div class="space-y-2">
+                            <div id="node-gp4" class="node-item bg-purple-50 border border-purple-200 text-purple-900 p-2 rounded-lg text-center text-[11px] font-bold uppercase">Tiempos & Costos</div>
+                            <div id="node-10" class="node-item glass-card p-2 rounded-lg cursor-pointer flex items-center justify-between" onclick="openDocModal('docs/10_Hitos_Proyecto.pdf', '10. Hitos del Proyecto')">
+                                <span class="text-xs text-slate-800">10. Hitos Proyecto</span>
+                                <i class="fa-solid fa-file-pdf text-red-500 text-xs"></i>
+                            </div>
+                            <div id="node-12" class="node-item glass-card p-2 rounded-lg cursor-pointer flex items-center justify-between" onclick="openDocModal('docs/12_Cronograma.pdf', '12. Cronograma')">
+                                <span class="text-xs text-slate-800">12. Cronograma</span>
+                                <i class="fa-solid fa-file-pdf text-red-500 text-xs"></i>
+                            </div>
+                            <div id="node-21" class="node-item glass-card p-2 rounded-lg cursor-pointer flex items-center justify-between" onclick="openDocModal('docs/21_Cronograma.pdf', '21. Cronograma Base')">
+                                <span class="text-xs text-slate-800">21. Cronograma</span>
+                                <i class="fa-solid fa-file-pdf text-red-500 text-xs"></i>
+                            </div>
+                            <div id="node-22" class="node-item glass-card p-2 rounded-lg cursor-pointer flex items-center justify-between" onclick="openDocModal('docs/22_Presupuesto.pdf', '22. Presupuesto Mensual')">
+                                <span class="text-xs text-slate-800">22. Presupuesto</span>
+                                <i class="fa-solid fa-file-pdf text-red-500 text-xs"></i>
+                            </div>
+                            <div id="node-23" class="node-item glass-card p-2 rounded-lg cursor-pointer flex items-center justify-between" onclick="openDocModal('docs/23_Gantt_Duracion_PERT.pdf', '23. Gantt PERT')">
+                                <span class="text-xs text-slate-800">23. Gantt PERT</span>
+                                <i class="fa-solid fa-file-pdf text-red-500 text-xs"></i>
+                            </div>
+                            <div id="node-24" class="node-item glass-card p-2 rounded-lg cursor-pointer flex items-center justify-between" onclick="openDocModal('docs/24_Gantt_Duracion_Optimista.pdf', '24. Gantt Optimista')">
+                                <span class="text-xs text-slate-800">24. Gantt Optimista</span>
+                                <i class="fa-solid fa-file-pdf text-red-500 text-xs"></i>
+                            </div>
+                            <div id="node-25" class="node-item glass-card p-2 rounded-lg cursor-pointer flex items-center justify-between" onclick="openDocModal('docs/25_Gantt_Duracion_Pesimista.pdf', '25. Gantt Pesimista')">
+                                <span class="text-xs text-slate-800">25. Gantt Pesimista</span>
+                                <i class="fa-solid fa-file-pdf text-red-500 text-xs"></i>
+                            </div>
+                            <div id="node-26" class="node-item glass-card p-2 rounded-lg cursor-pointer flex items-center justify-between" onclick="openDocModal('docs/26_Diagrama_Red.pdf', '26. Diagrama de Red PDM')">
+                                <span class="text-xs text-slate-800">26. Diagrama Red</span>
+                                <i class="fa-solid fa-file-pdf text-red-500 text-xs"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ==================== FASE 3: EJECUCIÓN ==================== -->
+                <div class="space-y-6 pt-4">
+                    <div class="flex justify-center">
+                        <div id="node-f3" class="node-item glass-phase text-white px-8 py-3.5 rounded-full font-black text-sm tracking-wide shadow-lg flex items-center gap-3 border border-white/20">
+                            <i class="fa-solid fa-gears text-gcaba-yellow"></i>
+                            <span>3. EJECUCIÓN</span>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+                        <!-- EDT / WBS -->
+                        <div class="space-y-3">
+                            <div id="node-ge1" class="node-item bg-emerald-50 border border-emerald-200 text-emerald-900 p-2 rounded-xl text-center text-xs font-bold uppercase tracking-wider">
+                                EDT / WBS Módulos
+                            </div>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                <div id="node-11" class="node-item glass-card p-2.5 rounded-xl border-l-4 border-l-emerald-500 cursor-pointer flex items-center justify-between" onclick="openDocModal('docs/11_EDT.png', '11. EDT General Diagrama')">
+                                    <span class="text-xs font-semibold text-slate-800">11. EDT General</span>
+                                    <i class="fa-solid fa-image text-blue-500 text-xs"></i>
+                                </div>
+                                <div id="node-13" class="node-item glass-card p-2.5 rounded-xl border-l-4 border-l-emerald-500 cursor-pointer flex items-center justify-between" onclick="openDocModal('docs/13_EDT_Gestion_Proyecto.xlsx', '13. EDT Gestión Proyecto')">
+                                    <span class="text-xs font-semibold text-slate-800">13. EDT Gestión</span>
+                                    <i class="fa-solid fa-file-excel text-emerald-600 text-xs"></i>
+                                </div>
+                                <div id="node-14" class="node-item glass-card p-2.5 rounded-xl border-l-4 border-l-emerald-500 cursor-pointer flex items-center justify-between" onclick="openDocModal('docs/14_EDT_Analisis_Diseno.xlsx', '14. EDT Análisis Diseño')">
+                                    <span class="text-xs font-semibold text-slate-800">14. EDT Análisis</span>
+                                    <i class="fa-solid fa-file-excel text-emerald-600 text-xs"></i>
+                                </div>
+                                <div id="node-15" class="node-item glass-card p-2.5 rounded-xl border-l-4 border-l-emerald-500 cursor-pointer flex items-center justify-between" onclick="openDocModal('docs/15_EDT_Front_End.xlsx', '15. EDT Front-End React')">
+                                    <span class="text-xs font-semibold text-slate-800">15. EDT Front-End</span>
+                                    <i class="fa-solid fa-file-excel text-emerald-600 text-xs"></i>
+                                </div>
+                                <div id="node-16" class="node-item glass-card p-2.5 rounded-xl border-l-4 border-l-emerald-500 cursor-pointer flex items-center justify-between" onclick="openDocModal('docs/16_EDT_Back_End.xlsx', '16. EDT Back-End Java')">
+                                    <span class="text-xs font-semibold text-slate-800">16. EDT Back-End</span>
+                                    <i class="fa-solid fa-file-excel text-emerald-600 text-xs"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- DESPLIEGUE -->
+                        <div class="space-y-3">
+                            <div id="node-ge2" class="node-item bg-emerald-50 border border-emerald-200 text-emerald-900 p-2 rounded-xl text-center text-xs font-bold uppercase tracking-wider">
+                                Despliegue PaaS
+                            </div>
+                            <div id="node-19" class="node-item glass-card p-3 rounded-xl border-l-4 border-l-emerald-500 cursor-pointer flex items-center justify-between" onclick="openDocModal('docs/19_EDT_Despliegue_Cierre.xlsx', '19. EDT Despliegue OpenShift')">
+                                <span class="text-xs font-semibold text-slate-800">19. EDT Despliegue Cierre</span>
+                                <i class="fa-solid fa-file-excel text-emerald-600 text-xs"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ==================== FASE 4: MONITOREO Y CONTROL ==================== -->
+                <div class="space-y-6 pt-4">
+                    <div class="flex justify-center">
+                        <div id="node-f4" class="node-item glass-phase text-white px-8 py-3.5 rounded-full font-black text-sm tracking-wide shadow-lg flex items-center gap-3 border border-white/20">
+                            <i class="fa-solid fa-shield-halved text-gcaba-yellow"></i>
+                            <span>4. MONITOREO Y CONTROL</span>
+                        </div>
+                    </div>
+
+                    <div class="max-w-xl mx-auto space-y-3">
+                        <div id="node-gm1" class="node-item bg-amber-50 border border-amber-200 text-amber-900 p-2 rounded-xl text-center text-xs font-bold uppercase tracking-wider">
+                            Aseguramiento de Calidad & ASI
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div id="node-17" class="node-item glass-card p-3 rounded-xl border-l-4 border-l-amber-500 cursor-pointer flex items-center justify-between" onclick="openDocModal('docs/17_EDT_Calidad_Seguridad.pdf.xlsx', '17. EDT Calidad y Seguridad')">
+                                <span class="text-xs font-semibold text-slate-800">17. EDT Calidad Seguridad</span>
+                                <i class="fa-solid fa-file-excel text-emerald-600 text-xs"></i>
+                            </div>
+                            <div id="node-18" class="node-item glass-card p-3 rounded-xl border-l-4 border-l-amber-500 cursor-pointer flex items-center justify-between" onclick="openDocModal('docs/18_EDT_Pruebas_Testeos.xlsx', '18. EDT Pruebas y Testeos')">
+                                <span class="text-xs font-semibold text-slate-800">18. EDT Pruebas Testeos</span>
+                                <i class="fa-solid fa-file-excel text-emerald-600 text-xs"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ==================== FASE 5: CIERRE ==================== -->
+                <div class="space-y-6 pt-4">
+                    <div class="flex justify-center">
+                        <div id="node-f5" class="node-item glass-phase text-white px-8 py-3.5 rounded-full font-black text-sm tracking-wide shadow-lg flex items-center gap-3 border border-white/20">
+                            <i class="fa-solid fa-crown text-gcaba-yellow"></i>
+                            <span>5. CIERRE</span>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+                        <!-- INFORMES FINALES -->
+                        <div class="space-y-3">
+                            <div id="node-gc1" class="node-item bg-red-50 border border-red-200 text-red-900 p-2 rounded-xl text-center text-xs font-bold uppercase tracking-wider">
+                                Informes Finales
+                            </div>
+                            <div id="node-20" class="node-item glass-card p-3 rounded-xl border-l-4 border-l-red-500 cursor-pointer flex items-center justify-between" onclick="openDocModal('docs/20_Desarrollo_Presupuesto_Cronograma.pdf', '20. Dev Presupuesto Cronograma')">
+                                <span class="text-xs font-semibold text-slate-800">20. Dev Presupuesto Cronograma</span>
+                                <i class="fa-solid fa-file-pdf text-red-500 text-xs"></i>
+                            </div>
+                            <!-- NODO 28 CÚPULA MAESTRO -->
+                            <div id="node-28" class="node-item bg-gradient-to-r from-amber-400 to-yellow-500 p-0.5 rounded-2xl shadow-md cursor-pointer" onclick="openDocModal('docs/28_Informe_Maestro_Completo.pdf', '28. Informe Maestro Completo PMBOK')">
+                                <div class="bg-slate-900 p-4 rounded-[14px] flex items-center justify-between">
+                                    <div class="flex items-center gap-3">
+                                        <i class="fa-solid fa-crown text-amber-400 text-lg"></i>
+                                        <span class="text-xs font-black text-amber-300 uppercase">28. Informe Maestro Completo</span>
+                                    </div>
+                                    <span class="text-[10px] bg-amber-400/20 text-amber-300 px-2 py-0.5 rounded font-bold">PDF FINAL</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- DOCUMENTACIÓN SOPORTE -->
+                        <div class="space-y-3">
+                            <div id="node-gc2" class="node-item bg-red-50 border border-red-200 text-red-900 p-2 rounded-xl text-center text-xs font-bold uppercase tracking-wider">
+                                Documentación Soporte
+                            </div>
+                            <div id="node-27" class="node-item glass-card p-3 rounded-xl border-l-4 border-l-red-500 cursor-pointer flex items-center justify-between" onclick="openDocModal('docs/27_Glosario_Terminos.xlsx', '27. Glosario de Términos')">
+                                <span class="text-xs font-semibold text-slate-800">27. Glosario de Términos</span>
+                                <i class="fa-solid fa-file-excel text-emerald-600 text-xs"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
 
         </div>
-    </div>
-</div>
 
-<!-- JAVASCRIPT: ANIMACIONES SVG, PARSER EXCEL LIMPIO & CONTROL DRAG/ZOOM -->
-<script>
-    // --- 1. CARGADOR DE HEADER Y FOOTER CON FALLBACK LOCAL ---
-    async function loadComponent(id, file, fallbackHTML) {
-        try {
-            const response = await fetch(file);
-            if (response.ok) {
-                const html = await response.text();
-                document.getElementById(id).innerHTML = html;
-            } else {
-                document.getElementById(id).innerHTML = fallbackHTML;
-            }
-        } catch (error) {
-            document.getElementById(id).innerHTML = fallbackHTML;
-        }
-    }
+    </main>
 
-    const headerFallback = `
-    <header class="sticky top-0 z-50 bg-white/95 backdrop-blur shadow-md border-b border-gray-100">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
-            <a href="index.html#inicio" class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#003366] to-[#0070E0] flex items-center justify-center shadow-md">
-                    <svg class="w-6 h-6 text-[#FFCC00] fill-current" viewBox="0 0 24 24"><path d="M12 2L9 8v13h6V8l-3-6zm1 18h-2v-9h2v9z"/></svg>
+    <!-- FOOTER CARGADO DINÁMICAMENTE -->
+    <div id="footer-container"></div>
+
+    <!-- MODAL DE VISUALIZACIÓN DINÁMICO (DETECCIÓN AUTOMÁTICA DE FORMATOS PDF, IMAGEN Y EXCEL) -->
+    <div id="docViewerModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-50 hidden flex flex-col transition-opacity">
+        
+        <!-- ENCABEZADO DEL MODAL -->
+        <div class="bg-white border-b border-gray-200 px-6 py-3 flex items-center justify-between shadow-sm">
+            <div class="flex items-center gap-3">
+                <div id="modalFileTypeIcon" class="w-9 h-9 rounded-xl bg-gcaba-blue text-white flex items-center justify-center font-bold text-sm">
+                    <i class="fa-solid fa-file-pdf"></i>
                 </div>
                 <div>
-                    <span class="text-xl font-black text-[#003366]">Obelisco<span class="text-[#0070E0]">Tech</span></span>
-                    <span class="text-[10px] font-semibold text-gray-500 block uppercase">Soluciones Digitales GCABA</span>
+                    <h3 id="modalDocTitle" class="text-base font-bold text-slate-900">Documento Oficial</h3>
+                    <span id="modalDocPath" class="text-xs font-mono text-gray-500">docs/archivo.pdf</span>
                 </div>
-            </a>
-            <nav class="hidden md:flex items-center gap-8 text-sm font-semibold text-gray-600">
-                <a href="index.html#inicio" class="hover:text-gcaba-accent">Inicio</a>
-                <a href="index.html#equipo" class="hover:text-gcaba-accent">Equipo</a>
-                <a href="https://ifts4.edu.ar/index.php" target="_blank" rel="noopener noreferrer" class="hover:text-gcaba-accent">Institución</a>
-                <a href="proyecto.html" class="px-5 py-2.5 rounded-full bg-[#0055A5] text-white font-bold">Proyecto</a>
-            </nav>
+            </div>
+
+            <!-- CONTROLES DE ZOOM Y ACCIONES -->
+            <div class="flex items-center gap-2">
+                <div id="zoomControls" class="hidden flex items-center bg-gray-100 rounded-xl p-1 border border-gray-300 mr-2">
+                    <button onclick="changeExcelZoom(-0.1)" class="w-7 h-7 rounded-lg bg-white text-slate-700 hover:bg-gray-200 font-bold text-xs shadow-sm flex items-center justify-center" title="Alejar (-)">
+                        <i class="fa-solid fa-minus"></i>
+                    </button>
+                    <span id="zoomLevelLabel" class="text-xs font-mono font-bold px-2 text-slate-700">100%</span>
+                    <button onclick="changeExcelZoom(0.1)" class="w-7 h-7 rounded-lg bg-white text-slate-700 hover:bg-gray-200 font-bold text-xs shadow-sm flex items-center justify-center" title="Acercar (+)">
+                        <i class="fa-solid fa-plus"></i>
+                    </button>
+                    <button onclick="resetExcelZoom()" class="px-2 py-1 ml-1 rounded-lg bg-white text-slate-700 hover:bg-gray-200 text-[10px] font-bold shadow-sm" title="Restablecer">
+                        Reset
+                    </button>
+                </div>
+
+                <a id="btnDownloadDoc" href="#" download class="px-3.5 py-2 bg-gray-100 hover:bg-gray-200 text-slate-800 rounded-xl text-xs font-bold transition-colors flex items-center gap-2 border border-gray-300">
+                    <i class="fa-solid fa-download"></i>
+                    <span class="hidden sm:inline">Descargar Archivo</span>
+                </a>
+                <button onclick="closeDocModal()" class="w-9 h-9 rounded-xl bg-red-50 hover:bg-red-500 text-red-600 hover:text-white transition-all flex items-center justify-center font-bold">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
         </div>
-    </header>`;
 
-    const footerFallback = `
-    <footer class="bg-slate-950 text-white pt-8 pb-6 border-t border-slate-800 mt-auto">
-        <div class="max-w-7xl mx-auto px-4 text-center text-xs text-gray-500">
-            <p>© 2026 <strong>ObeliscoTech</strong> — Trabajo Práctico Integrador para <strong>IFTS N° 4</strong> (GCABA).</p>
+        <!-- CUERPO DEL MODAL (VISOR AMPLIADO CON SCROLL Y DRAG PANORÁMICO) -->
+        <div class="flex-grow p-2 sm:p-4 bg-slate-100 overflow-hidden relative">
+            <div id="viewerViewport" class="w-full h-full rounded-2xl bg-white border border-gray-300 shadow-inner overflow-auto viewer-drag-container p-2">
+                
+                <!-- IFRAME PARA DOCUMENTOS PDF -->
+                <iframe id="docIframe" src="" class="w-full h-full min-h-[600px] border-0 rounded-xl hidden" title="Visor PDF"></iframe>
+                
+                <!-- VISTA PREVIA DE IMÁGENES (.PNG / .JPG) -->
+                <img id="docImage" src="" alt="Previsualización" class="max-w-full h-auto mx-auto rounded-lg shadow hidden pointer-events-none">
+                
+                <!-- RENDERIZADOR DINÁMICO DE ARCHIVOS EXCEL (.xlsx) -->
+                <div id="excelPreviewContainer" class="hidden space-y-3 w-full py-2">
+                    <div class="bg-blue-50/80 p-3 rounded-xl border border-blue-200 flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <i class="fa-solid fa-file-excel text-emerald-600 text-xl"></i>
+                            <div>
+                                <h4 class="text-xs font-bold text-slate-900">Vista Completa de Planilla Excel (.xlsx)</h4>
+                                <p class="text-[11px] text-slate-600">Arrastrá con el mouse o dedo para desplazarte por la tabla.</p>
+                            </div>
+                        </div>
+                        <span class="text-[10px] bg-emerald-100 text-emerald-800 font-bold px-2.5 py-1 rounded-full border border-emerald-300">Modo Solo Lectura</span>
+                    </div>
+
+                    <div id="excelZoomWrapper" class="transition-transform origin-top-left overflow-visible">
+                        <div id="excelTableOutput" class="w-full overflow-x-auto rounded-xl border border-gray-300 bg-white shadow-sm p-1"></div>
+                    </div>
+                </div>
+
+            </div>
         </div>
-    </footer>`;
+    </div>
 
-    document.addEventListener('DOMContentLoaded', () => {
-        loadComponent('header-container', 'components/header.html', headerFallback);
-        loadComponent('footer-container', 'components/footer.html', footerFallback);
-        startTreeAnimation();
-        setupDragAndTouchScroll();
-    });
-
-    // --- 2. ANIMACIÓN DE DIBUJO PROGRESIVO DE LÍNEAS Y REVELADO ESCALONADO ---
-    function startTreeAnimation() {
-        const backbone = document.getElementById('path-backbone');
-        const nodes = document.querySelectorAll('.node-item');
-
-        backbone.classList.remove('active');
-        nodes.forEach(n => n.classList.remove('visible'));
-
-        // Dibujar eje vertical
-        setTimeout(() => {
-            backbone.classList.add('active');
-        }, 100);
-
-        // Secuencia jerárquica de arriba a abajo
-        const sequence = [
-            ['node-f1', 'node-gi1', 'node-gi2', 'node-01', 'node-02', 'node-03', 'node-04'],
-            ['node-f2', 'node-gp1', 'node-gp2', 'node-gp3', 'node-gp4', 'node-05', 'node-06', 'node-07', 'node-08', 'node-09', 'node-10', 'node-21', 'node-22', 'node-23', 'node-26'],
-            ['node-f3', 'node-ge1', 'node-ge2', 'node-11', 'node-13', 'node-14', 'node-15', 'node-16', 'node-19'],
-            ['node-f4', 'node-gm1', 'node-17', 'node-18'],
-            ['node-f5', 'node-gc1', 'node-gc2', 'node-20', 'node-27', 'node-28']
-        ];
-
-        let delay = 300;
-        sequence.forEach(group => {
-            setTimeout(() => {
-                group.forEach(id => {
-                    const el = document.getElementById(id);
-                    if (el) el.classList.add('visible');
-                });
-            }, delay);
-            delay += 400;
-        });
-    }
-
-    function showAllNodesImmediately() {
-        document.getElementById('path-backbone').classList.add('active');
-        document.querySelectorAll('.node-item').forEach(n => n.classList.add('visible'));
-    }
-
-    // --- 3. VARIABLES DE CONTROL DE ZOOM PARA PLANILLAS EXCEL ---
-    let currentExcelZoom = 1.0;
-
-    function changeExcelZoom(delta) {
-        currentExcelZoom = Math.max(0.4, Math.min(2.0, currentExcelZoom + delta));
-        applyExcelZoom();
-    }
-
-    function resetExcelZoom() {
-        currentExcelZoom = 1.0;
-        applyExcelZoom();
-    }
-
-    function applyExcelZoom() {
-        const wrapper = document.getElementById('excelZoomWrapper');
-        const label = document.getElementById('zoomLevelLabel');
-        if (wrapper) wrapper.style.transform = `scale(${currentExcelZoom})`;
-        if (label) label.textContent = `${Math.round(currentExcelZoom * 100)}%`;
-    }
-
-    // --- 4. LÓGICA DEL VISOR MODAL CON FILTRADO DE FILAS/COLUMNAS VACÍAS ---
-    async function openDocModal(filePath, title, type) {
-        const modal = document.getElementById('docViewerModal');
-        const iframe = document.getElementById('docIframe');
-        const img = document.getElementById('docImage');
-        const excelContainer = document.getElementById('excelPreviewContainer');
-        const excelOutput = document.getElementById('excelTableOutput');
-        const titleEl = document.getElementById('modalDocTitle');
-        const pathEl = document.getElementById('modalDocPath');
-        const downloadBtn = document.getElementById('btnDownloadDoc');
-        const iconContainer = document.getElementById('modalFileTypeIcon');
-        const zoomControls = document.getElementById('zoomControls');
-
-        titleEl.textContent = title;
-        pathEl.textContent = filePath;
-        downloadBtn.href = filePath;
-        resetExcelZoom();
-
-        // Ocultar visores previos
-        iframe.classList.add('hidden');
-        img.classList.add('hidden');
-        excelContainer.classList.add('hidden');
-        zoomControls.classList.add('hidden');
-
-        if (type === 'pdf') {
-            iframe.src = filePath;
-            iframe.classList.remove('hidden');
-            iconContainer.className = 'w-9 h-9 rounded-xl bg-red-600 text-white flex items-center justify-center font-bold text-sm';
-            iconContainer.innerHTML = '<i class="fa-solid fa-file-pdf"></i>';
-        } else if (type === 'image') {
-            img.src = filePath;
-            img.classList.remove('hidden');
-            iconContainer.className = 'w-9 h-9 rounded-xl bg-blue-600 text-white flex items-center justify-center font-bold text-sm';
-            iconContainer.innerHTML = '<i class="fa-solid fa-image"></i>';
-        } else if (type === 'xlsx') {
-            excelContainer.classList.remove('hidden');
-            zoomControls.classList.remove('hidden');
-            iconContainer.className = 'w-9 h-9 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-bold text-sm';
-            iconContainer.innerHTML = '<i class="fa-solid fa-file-excel"></i>';
-
-            excelOutput.innerHTML = '<div class="p-8 text-center text-gcaba-blue font-bold"><i class="fa-solid fa-spinner fa-spin text-2xl mb-2 block"></i> Cargando y limpiando la planilla...</div>';
-            
+    <!-- JAVASCRIPT: DETECCIÓN AUTOMÁTICA DE FORMATOS, ANIMACIONES & ZOOM -->
+    <script>
+        // --- 1. CARGADOR DE HEADER Y FOOTER CON FALLBACK LOCAL ---
+        async function loadComponent(id, file, fallbackHTML) {
             try {
-                const response = await fetch(filePath);
-                if (!response.ok) throw new Error("No se pudo cargar el archivo");
-                const data = await response.arrayBuffer();
-                const workbook = XLSX.read(data, { type: 'array' });
-                
-                const firstSheetName = workbook.SheetNames[0];
-                const worksheet = workbook.Sheets[firstSheetName];
-
-                // CONVERTIR HOJA EN MATRIZ JSON PARA FILTRAR FILAS Y COLUMNAS COMPLETAMENTE VACÍAS
-                const jsonMatrix = XLSX.utils.sheet_to_json(worksheet, { header: 1, defval: '' });
-                
-                // 1. Filtrar filas que estén vacías
-                const nonEmpRows = jsonMatrix.filter(row => row.some(cell => cell !== null && cell !== undefined && String(cell).trim() !== ''));
-
-                if (nonEmpRows.length > 0) {
-                    // 2. Determinar índices de columnas que contienen al menos un valor
-                    const activeColIndices = [];
-                    const maxCols = Math.max(...nonEmpRows.map(r => r.length));
-                    
-                    for (let col = 0; col < maxCols; col++) {
-                        const hasContent = nonEmpRows.some(row => row[col] !== undefined && row[col] !== null && String(row[col]).trim() !== '');
-                        if (hasContent) {
-                            activeColIndices.push(col);
-                        }
-                    }
-
-                    // 3. Reconstruir matriz limpia solo con columnas activas
-                    const cleanedMatrix = nonEmpRows.map(row => activeColIndices.map(colIdx => row[colIdx] || ''));
-
-                    // 4. Generar nueva hoja de cálculo limpia y convertir a HTML
-                    const cleanSheet = XLSX.utils.aoa_to_sheet(cleanedMatrix);
-                    let htmlTable = XLSX.utils.sheet_to_html(cleanSheet, { id: 'parsedExcelTable', editable: false });
-                    excelOutput.innerHTML = htmlTable;
+                const response = await fetch(file);
+                if (response.ok) {
+                    const html = await response.text();
+                    document.getElementById(id).innerHTML = html;
                 } else {
-                    excelOutput.innerHTML = '<div class="p-6 text-center text-gray-500 font-semibold">La planilla no contiene datos visibles.</div>';
+                    document.getElementById(id).innerHTML = fallbackHTML;
                 }
-            } catch (err) {
-                excelOutput.innerHTML = `
-                <div class="p-6 text-center text-slate-700 font-medium">
-                    <i class="fa-solid fa-circle-exclamation text-amber-500 text-2xl mb-2 block"></i>
-                    Vista previa limpia disponible descargando el archivo original.
-                </div>`;
+            } catch (error) {
+                document.getElementById(id).innerHTML = fallbackHTML;
             }
         }
 
-        modal.classList.remove('hidden');
-    }
+        const headerFallback = `
+        <header class="sticky top-0 z-50 bg-white/95 backdrop-blur shadow-md border-b border-gray-100">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+                <a href="index.html#inicio" class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#003366] to-[#0070E0] flex items-center justify-center shadow-md">
+                        <svg class="w-6 h-6 text-[#FFCC00] fill-current" viewBox="0 0 24 24"><path d="M12 2L9 8v13h6V8l-3-6zm1 18h-2v-9h2v9z"/></svg>
+                    </div>
+                    <div>
+                        <span class="text-xl font-black text-[#003366]">Obelisco<span class="text-[#0070E0]">Tech</span></span>
+                        <span class="text-[10px] font-semibold text-gray-500 block uppercase">Soluciones Digitales GCABA</span>
+                    </div>
+                </a>
+                <nav class="hidden md:flex items-center gap-8 text-sm font-semibold text-gray-600">
+                    <a href="index.html#inicio" class="hover:text-gcaba-accent">Inicio</a>
+                    <a href="index.html#equipo" class="hover:text-gcaba-accent">Equipo</a>
+                    <a href="https://ifts4.edu.ar/index.php" target="_blank" rel="noopener noreferrer" class="hover:text-gcaba-accent">Institución</a>
+                    <a href="proyecto.html" class="px-5 py-2.5 rounded-full bg-[#0055A5] text-white font-bold">Proyecto</a>
+                </nav>
+            </div>
+        </header>`;
 
-    function closeDocModal() {
-        document.getElementById('docIframe').src = '';
-        document.getElementById('docViewerModal').classList.add('hidden');
-    }
+        const footerFallback = `
+        <footer class="bg-slate-950 text-white pt-8 pb-6 border-t border-slate-800 mt-auto">
+            <div class="max-w-7xl mx-auto px-4 text-center text-xs text-gray-500">
+                <p>© 2026 <strong>ObeliscoTech</strong> — Trabajo Práctico Integrador para <strong>IFTS N° 4</strong> (GCABA).</p>
+            </div>
+        </footer>`;
 
-    // --- 5. ARRASTRE DE MOUSE (DRAG) Y CONTROL TÁCTIL (TOUCH) PARA NAVEGAR PANORÁMICAMENTE ---
-    function setupDragAndTouchScroll() {
-        const viewport = document.getElementById('viewerViewport');
-        let isDown = false, startX, startY, scrollLeft, scrollTop;
-
-        viewport.addEventListener('mousedown', (e) => {
-            isDown = true;
-            startX = e.pageX - viewport.offsetLeft;
-            startY = e.pageY - viewport.offsetTop;
-            scrollLeft = viewport.scrollLeft;
-            scrollTop = viewport.scrollTop;
+        document.addEventListener('DOMContentLoaded', () => {
+            loadComponent('header-container', 'components/header.html', headerFallback);
+            loadComponent('footer-container', 'components/footer.html', footerFallback);
+            startTreeAnimation();
+            setupDragAndTouchScroll();
         });
-        viewport.addEventListener('mouseleave', () => isDown = false);
-        viewport.addEventListener('mouseup', () => isDown = false);
-        viewport.addEventListener('mousemove', (e) => {
-            if (!isDown) return;
-            e.preventDefault();
-            viewport.scrollLeft = scrollLeft - ((e.pageX - viewport.offsetLeft) - startX) * 1.5;
-            viewport.scrollTop = scrollTop - ((e.pageY - viewport.offsetTop) - startY) * 1.5;
-        });
-    }
-</script>
+
+        // --- 2. ANIMACIÓN DE DIBUJO PROGRESIVO DE LÍNEAS Y REVELADO ESCALONADO ---
+        function startTreeAnimation() {
+            const backbone = document.getElementById('path-backbone');
+            const nodes = document.querySelectorAll('.node-item');
+
+            backbone.classList.remove('active');
+            nodes.forEach(n => n.classList.remove('visible'));
+
+            setTimeout(() => {
+                backbone.classList.add('active');
+            }, 100);
+
+            const sequence = [
+                ['node-f1', 'node-gi1', 'node-gi2', 'node-01', 'node-02', 'node-03', 'node-04'],
+                ['node-f2', 'node-gp1', 'node-gp2', 'node-gp3', 'node-gp4', 'node-05', 'node-06', 'node-07', 'node-08', 'node-09', 'node-10', 'node-12', 'node-21', 'node-22', 'node-23', 'node-24', 'node-25', 'node-26'],
+                ['node-f3', 'node-ge1', 'node-ge2', 'node-11', 'node-13', 'node-14', 'node-15', 'node-16', 'node-19'],
+                ['node-f4', 'node-gm1', 'node-17', 'node-18'],
+                ['node-f5', 'node-gc1', 'node-gc2', 'node-20', 'node-27', 'node-28']
+            ];
+
+            let delay = 300;
+            sequence.forEach(group => {
+                setTimeout(() => {
+                    group.forEach(id => {
+                        const el = document.getElementById(id);
+                        if (el) el.classList.add('visible');
+                    });
+                }, delay);
+                delay += 400;
+            });
+        }
+
+        function showAllNodesImmediately() {
+            document.getElementById('path-backbone').classList.add('active');
+            document.querySelectorAll('.node-item').forEach(n => n.classList.add('visible'));
+        }
+
+        // --- 3. CONTROLES DE ZOOM PARA PLANILLAS ---
+        let currentExcelZoom = 1.0;
+
+        function changeExcelZoom(delta) {
+            currentExcelZoom = Math.max(0.4, Math.min(2.0, currentExcelZoom + delta));
+            applyExcelZoom();
+        }
+
+        function resetExcelZoom() {
+            currentExcelZoom = 1.0;
+            applyExcelZoom();
+        }
+
+        function applyExcelZoom() {
+            const wrapper = document.getElementById('excelZoomWrapper');
+            const label = document.getElementById('zoomLevelLabel');
+            if (wrapper) wrapper.style.transform = `scale(${currentExcelZoom})`;
+            if (label) label.textContent = `${Math.round(currentExcelZoom * 100)}%`;
+        }
+
+        // --- 4. DETECCIÓN AUTOMÁTICA DE TIPO DE DOCUMENTO Y VISOR MODAL ---
+        async function openDocModal(filePath, title, forcedType = null) {
+            const modal = document.getElementById('docViewerModal');
+            const iframe = document.getElementById('docIframe');
+            const img = document.getElementById('docImage');
+            const excelContainer = document.getElementById('excelPreviewContainer');
+            const excelOutput = document.getElementById('excelTableOutput');
+            const titleEl = document.getElementById('modalDocTitle');
+            const pathEl = document.getElementById('modalDocPath');
+            const downloadBtn = document.getElementById('btnDownloadDoc');
+            const iconContainer = document.getElementById('modalFileTypeIcon');
+            const zoomControls = document.getElementById('zoomControls');
+
+            // DETECCIÓN AUTOMÁTICA DE EXTENSIÓN SI NO SE ESPECIFICA
+            let type = forcedType;
+            if (!type) {
+                const ext = filePath.split('.').pop().toLowerCase();
+                if (ext === 'pdf') type = 'pdf';
+                else if (['png', 'jpg', 'jpeg', 'webp'].includes(ext)) type = 'image';
+                else if (['xlsx', 'xls', 'csv'].includes(ext)) type = 'xlsx';
+                else type = 'pdf';
+            }
+
+            titleEl.textContent = title;
+            pathEl.textContent = filePath;
+            downloadBtn.href = filePath;
+            resetExcelZoom();
+
+            iframe.classList.add('hidden');
+            img.classList.add('hidden');
+            excelContainer.classList.add('hidden');
+            zoomControls.classList.add('hidden');
+
+            if (type === 'pdf') {
+                iframe.src = filePath;
+                iframe.classList.remove('hidden');
+                iconContainer.className = 'w-9 h-9 rounded-xl bg-red-600 text-white flex items-center justify-center font-bold text-sm';
+                iconContainer.innerHTML = '<i class="fa-solid fa-file-pdf"></i>';
+            } else if (type === 'image') {
+                img.src = filePath;
+                img.classList.remove('hidden');
+                iconContainer.className = 'w-9 h-9 rounded-xl bg-blue-600 text-white flex items-center justify-center font-bold text-sm';
+                iconContainer.innerHTML = '<i class="fa-solid fa-image"></i>';
+            } else if (type === 'xlsx') {
+                excelContainer.classList.remove('hidden');
+                zoomControls.classList.remove('hidden');
+                iconContainer.className = 'w-9 h-9 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-bold text-sm';
+                iconContainer.innerHTML = '<i class="fa-solid fa-file-excel"></i>';
+
+                excelOutput.innerHTML = '<div class="p-8 text-center text-gcaba-blue font-bold"><i class="fa-solid fa-spinner fa-spin text-2xl mb-2 block"></i> Cargando y procesando la planilla...</div>';
+                
+                try {
+                    const response = await fetch(filePath);
+                    if (!response.ok) throw new Error("No se pudo cargar el archivo");
+                    const data = await response.arrayBuffer();
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    
+                    const firstSheetName = workbook.SheetNames[0];
+                    const worksheet = workbook.Sheets[firstSheetName];
+                    const jsonMatrix = XLSX.utils.sheet_to_json(worksheet, { header: 1, defval: '' });
+                    
+                    const nonEmpRows = jsonMatrix.filter(row => row.some(cell => cell !== null && cell !== undefined && String(cell).trim() !== ''));
+
+                    if (nonEmpRows.length > 0) {
+                        const activeColIndices = [];
+                        const maxCols = Math.max(...nonEmpRows.map(r => r.length));
+                        
+                        for (let col = 0; col < maxCols; col++) {
+                            const hasContent = nonEmpRows.some(row => row[col] !== undefined && row[col] !== null && String(row[col]).trim() !== '');
+                            if (hasContent) activeColIndices.push(col);
+                        }
+
+                        const cleanedMatrix = nonEmpRows.map(row => activeColIndices.map(colIdx => row[colIdx] || ''));
+                        const cleanSheet = XLSX.utils.aoa_to_sheet(cleanedMatrix);
+                        let htmlTable = XLSX.utils.sheet_to_html(cleanSheet, { id: 'parsedExcelTable', editable: false });
+                        excelOutput.innerHTML = htmlTable;
+                    } else {
+                        excelOutput.innerHTML = '<div class="p-6 text-center text-gray-500 font-semibold">La planilla no contiene datos visibles.</div>';
+                    }
+                } catch (err) {
+                    excelOutput.innerHTML = `
+                    <div class="p-6 text-center text-slate-700 font-medium">
+                        <i class="fa-solid fa-circle-exclamation text-amber-500 text-2xl mb-2 block"></i>
+                        Vista previa limpia disponible descargando el archivo original.
+                    </div>`;
+                }
+            }
+
+            modal.classList.remove('hidden');
+        }
+
+        function closeDocModal() {
+            document.getElementById('docIframe').src = '';
+            document.getElementById('docViewerModal').classList.add('hidden');
+        }
+
+        // --- 5. ARRASTRE DE MOUSE Y NAVEGACIÓN TÁCTIL ---
+        function setupDragAndTouchScroll() {
+            const viewport = document.getElementById('viewerViewport');
+            let isDown = false, startX, startY, scrollLeft, scrollTop;
+
+            viewport.addEventListener('mousedown', (e) => {
+                isDown = true;
+                startX = e.pageX - viewport.offsetLeft;
+                startY = e.pageY - viewport.offsetTop;
+                scrollLeft = viewport.scrollLeft;
+                scrollTop = viewport.scrollTop;
+            });
+            viewport.addEventListener('mouseleave', () => isDown = false);
+            viewport.addEventListener('mouseup', () => isDown = false);
+            viewport.addEventListener('mousemove', (e) => {
+                if (!isDown) return;
+                e.preventDefault();
+                viewport.scrollLeft = scrollLeft - ((e.pageX - viewport.offsetLeft) - startX) * 1.5;
+                viewport.scrollTop = scrollTop - ((e.pageY - viewport.offsetTop) - startY) * 1.5;
+            });
+        }
+    </script>
+</body>
+</html>
